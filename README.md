@@ -18,19 +18,21 @@ La aplicación queda disponible en http://localhost:5173.
 
 ## Scripts
 
-| Script            | Qué hace                                                    |
-| ----------------- | ----------------------------------------------------------- |
-| `npm start`       | Servidor de desarrollo con recarga en caliente.             |
-| `npm run build`   | Comprueba tipos y genera la build de producción en `dist/`. |
-| `npm run preview` | Sirve en local la build de producción.                      |
+| Script            | Qué hace                                                                                       |
+| ----------------- | ---------------------------------------------------------------------------------------------- |
+| `npm start`       | Servidor de desarrollo con recarga en caliente.                                                |
+| `npm run build`   | Comprueba tipos y genera la build de producción en `dist/`.                                    |
+| `npm run preview` | Sirve en local la build de producción.                                                         |
+| `npm run lint`    | Analiza el código con ESLint (reglas de TypeScript con tipos y de React). Falla con cualquier aviso. |
 
-Los scripts de tests y lint se añaden en los siguientes commits, junto con sus herramientas.
+El script de tests se añade en un commit posterior, junto con su herramienta.
 
 ## Stack
 
 - **React 19** como librería de interfaz.
 - **TypeScript** en modo estricto. El enunciado permite JavaScript ES6; se usa TypeScript para detectar errores en tiempo de compilación y documentar los contratos con el API.
 - **Vite** como servidor de desarrollo y empaquetador para producción.
+- **ESLint** con typescript-eslint (reglas estrictas con información de tipos) y los plugins oficiales de React Hooks y React Refresh.
 
 ## Decisiones técnicas
 
