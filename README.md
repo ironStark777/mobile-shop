@@ -32,6 +32,12 @@ Los scripts de tests y lint se añaden en los siguientes commits, junto con sus 
 - **TypeScript** en modo estricto. El enunciado permite JavaScript ES6; se usa TypeScript para detectar errores en tiempo de compilación y documentar los contratos con el API.
 - **Vite** como servidor de desarrollo y empaquetador para producción.
 
+## Decisiones técnicas
+
+Las decisiones relevantes se documentan como ADR (Architecture Decision Record) en [`docs/adr`](docs/adr):
+
+- [ADR-0001](docs/adr/0001-vite-react-typescript.md): Vite, React y TypeScript como base del proyecto.
+
 ## Hitos
 
 El proyecto se construye de forma incremental, con un commit por cambio siguiendo [Conventional Commits](https://www.conventionalcommits.org/).
