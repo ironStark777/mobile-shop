@@ -53,13 +53,14 @@ VITE_API_BASE_URL=http://localhost:3000/api
 Las decisiones relevantes se documentan como ADR (Architecture Decision Record) en [`docs/adr`](docs/adr):
 
 - [ADR-0001](docs/adr/0001-vite-react-typescript.md): Vite, React y TypeScript como base del proyecto.
+- [ADR-0002](docs/adr/0002-cache-de-respuestas-del-api.md): caché de las respuestas del API en `localStorage`, con 1 hora de vigencia.
 
 ## Hitos
 
 El proyecto se construye de forma incremental, con un commit por cambio siguiendo [Conventional Commits](https://www.conventionalcommits.org/).
 
 - [x] 1. Proyecto base y herramientas: lint, formato y tests.
-- [ ] 2. Capa de datos: modelos, cliente del API y caché con expiración de 1 hora.
+- [x] 2. Capa de datos: modelos, cliente del API y caché con expiración de 1 hora.
 - [ ] 3. Layout: cabecera con logo, breadcrumbs y contador de la cesta; enrutado.
 - [ ] 4. Listado de productos y buscador en tiempo real.
 - [ ] 5. Detalle de producto: imagen y descripción.
@@ -76,4 +77,6 @@ Base: `https://itx-frontend-test.onrender.com`
 | GET    | `/api/product/:id` | Detalle de un producto                                                         |
 | POST   | `/api/cart`        | Añadir a la cesta. Body `{ id, colorCode, storageCode }`, responde `{ count }` |
 
-El API está alojado en un plan gratuito, así que la primera petición tras un rato sin uso puede tardar bastante mientras el servicio arranca.
+En las pruebas, la primera petición al API tras un rato sin uso tardó más de un minuto en responder.
+
+Las respuestas de los `GET` se guardan en `localStorage` durante 1 hora. Pasado ese tiempo se vuelven a pedir y, si el API falla o responde con datos no válidos, se usa la última respuesta válida guardada, marcada como no actualizada. El `POST` de la cesta nunca se guarda. Los detalles están en el [ADR-0002](docs/adr/0002-cache-de-respuestas-del-api.md).
