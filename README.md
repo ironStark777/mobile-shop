@@ -24,6 +24,8 @@ La aplicación queda disponible en http://localhost:5173.
 | `npm run build`   | Comprueba tipos y genera la build de producción en `dist/`.                                    |
 | `npm run preview` | Sirve en local la build de producción.                                                         |
 | `npm run lint`    | Analiza el código con ESLint (reglas de TypeScript con tipos y de React). Falla con cualquier aviso. |
+| `npm run format`  | Formatea todo el código con Prettier. |
+| `npm run format:check` | Comprueba el formato sin modificar nada. |
 
 El script de tests se añade en un commit posterior, junto con su herramienta.
 
@@ -33,6 +35,7 @@ El script de tests se añade en un commit posterior, junto con su herramienta.
 - **TypeScript** en modo estricto. El enunciado permite JavaScript ES6; se usa TypeScript para detectar errores en tiempo de compilación y documentar los contratos con el API.
 - **Vite** como servidor de desarrollo y empaquetador para producción.
 - **ESLint** con typescript-eslint (reglas estrictas con información de tipos) y los plugins oficiales de React Hooks y React Refresh.
+- **Prettier** para el formato del código. ESLint se encarga de detectar errores y Prettier del estilo; `eslint-config-prettier` evita que se pisen.
 
 ## Decisiones técnicas
 
