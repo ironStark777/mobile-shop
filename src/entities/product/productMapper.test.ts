@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
+import { InvalidApiResponseError } from '../../shared/api/invalidApiResponseError';
 import acerDx650 from './__fixtures__/product-acer-dx650.json';
 import acerIconiaOne7 from './__fixtures__/product-acer-iconia-one-7.json';
 import acerIconiaTalkS from './__fixtures__/product-acer-iconia-talk-s.json';
 import alcatelFlash2017 from './__fixtures__/product-alcatel-flash-2017.json';
 import productList from './__fixtures__/product-list.json';
-import { InvalidApiResponseError, parseProductDetail, parseProductList } from './productMapper';
+import { parseProductDetail, parseProductList } from './productMapper';
 
 // Las fixtures son respuestas reales del API, elegidas porque cubren sus irregularidades.
 

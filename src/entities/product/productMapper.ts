@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { InvalidApiResponseError } from '../../shared/api/invalidApiResponseError';
 import type { ProductDetail, ProductOption, ProductSummary } from './product';
 import {
   productDetailDtoSchema,
@@ -7,10 +8,6 @@ import {
   type ProductOptionDto,
   type ProductSummaryDto,
 } from './productDto';
-
-export class InvalidApiResponseError extends Error {
-  override name = 'InvalidApiResponseError';
-}
 
 function collapseSpaces(value: string): string {
   return value.replace(/\s+/g, ' ').trim();
