@@ -10,11 +10,14 @@ export interface ResponseCache {
   readonly write: (key: string, body: unknown) => void;
 }
 
-export interface CachedResult {
-  readonly body: unknown;
+export interface CachedResult<T> {
+  readonly data: T;
   /** `true` si el API ha fallado y se devuelve el último dato guardado, aunque haya caducado. */
   readonly isStale: boolean;
 }
+
+/** Valida la respuesta y la convierte en datos de la app. Lanza un error si no es válida. */
+export type ParseResponse<T> = (body: unknown) => T;
 
 export interface ResponseCacheOptions {
   readonly storage: KeyValueStorage;
@@ -78,26 +81,52 @@ export function createResponseCache({
   };
 }
 
+interface ParsedEntry<T> {
+  readonly data: T;
+  readonly isFresh: boolean;
+}
+
+/** Una entrada guardada que ya no pasa la validación cuenta como si no existiera. */
+function readParsed<T>(
+  cache: ResponseCache,
+  key: string,
+  parse: ParseResponse<T>,
+): ParsedEntry<T> | null {
+  const entry = cache.read(key);
+  if (!entry) {
+    return null;
+  }
+  try {
+    return { data: parse(entry.body), isFresh: entry.isFresh };
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Devuelve la respuesta guardada mientras esté vigente. Pasada la hora la pide de nuevo y,
  * si el API falla, devuelve la última guardada marcada como no actualizada (`isStale`).
+ * Una respuesta que no pasa la validación cuenta como un fallo del API: no se guarda, así que
+ * no sustituye al último dato bueno.
  */
-export async function fetchWithCache(
+export async function fetchWithCache<T>(
   cache: ResponseCache,
   key: string,
   fetchFresh: () => Promise<unknown>,
-): Promise<CachedResult> {
-  const cached = cache.read(key);
+  parse: ParseResponse<T>,
+): Promise<CachedResult<T>> {
+  const cached = readParsed(cache, key, parse);
   if (cached?.isFresh) {
-    return { body: cached.body, isStale: false };
+    return { data: cached.data, isStale: false };
   }
   try {
     const body = await fetchFresh();
+    const data = parse(body);
     cache.write(key, body);
-    return { body, isStale: false };
+    return { data, isStale: false };
   } catch (error) {
     if (cached) {
-      return { body: cached.body, isStale: true };
+      return { data: cached.data, isStale: true };
     }
     throw error;
   }

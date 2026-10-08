@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
+import * as z from 'zod';
 import type { KeyValueStorage } from '../lib/storage';
 import { CACHE_TTL_MS, createResponseCache, fetchWithCache } from './responseCache';
 
@@ -19,6 +20,8 @@ function setup() {
   const cache = createResponseCache({ storage, now: () => clock.now });
   return { storage, clock, cache };
 }
+
+const parseNames = (body: unknown) => z.array(z.string()).parse(body);
 
 describe('createResponseCache', () => {
   it('devuelve null si no hay nada guardado', () => {
@@ -69,9 +72,9 @@ describe('fetchWithCache', () => {
     const { cache } = setup();
     const fetchFresh = vi.fn(() => Promise.resolve(['nuevo']));
 
-    const result = await fetchWithCache(cache, '/product', fetchFresh);
+    const result = await fetchWithCache(cache, '/product', fetchFresh, parseNames);
 
-    expect(result).toEqual({ body: ['nuevo'], isStale: false });
+    expect(result).toEqual({ data: ['nuevo'], isStale: false });
     expect(cache.read('/product')?.body).toEqual(['nuevo']);
   });
 
@@ -80,9 +83,9 @@ describe('fetchWithCache', () => {
     cache.write('/product', ['guardado']);
     const fetchFresh = vi.fn(() => Promise.resolve(['nuevo']));
 
-    const result = await fetchWithCache(cache, '/product', fetchFresh);
+    const result = await fetchWithCache(cache, '/product', fetchFresh, parseNames);
 
-    expect(result).toEqual({ body: ['guardado'], isStale: false });
+    expect(result).toEqual({ data: ['guardado'], isStale: false });
     expect(fetchFresh).not.toHaveBeenCalled();
   });
 
@@ -92,9 +95,9 @@ describe('fetchWithCache', () => {
     clock.now = CACHE_TTL_MS;
     const fetchFresh = vi.fn(() => Promise.resolve(['nuevo']));
 
-    const result = await fetchWithCache(cache, '/product', fetchFresh);
+    const result = await fetchWithCache(cache, '/product', fetchFresh, parseNames);
 
-    expect(result).toEqual({ body: ['nuevo'], isStale: false });
+    expect(result).toEqual({ data: ['nuevo'], isStale: false });
     expect(cache.read('/product')).toEqual({ body: ['nuevo'], isFresh: true });
   });
 
@@ -102,20 +105,53 @@ describe('fetchWithCache', () => {
     const { clock, cache } = setup();
     cache.write('/product', ['guardado']);
     clock.now = CACHE_TTL_MS;
+    const fetchFresh = vi.fn(() => Promise.reject(new Error('API caída')));
 
-    const result = await fetchWithCache(cache, '/product', () =>
-      Promise.reject(new Error('API caída')),
-    );
+    const result = await fetchWithCache(cache, '/product', fetchFresh, parseNames);
 
-    expect(result).toEqual({ body: ['guardado'], isStale: true });
+    expect(result).toEqual({ data: ['guardado'], isStale: true });
   });
 
   it('si el API falla y no hay nada guardado, propaga el error', async () => {
     const { cache } = setup();
     const error = new Error('API caída');
+    const fetchFresh = vi.fn(() => Promise.reject(error));
 
-    await expect(fetchWithCache(cache, '/product', () => Promise.reject(error))).rejects.toBe(
-      error,
-    );
+    const result = fetchWithCache(cache, '/product', fetchFresh, parseNames);
+
+    await expect(result).rejects.toBe(error);
+  });
+
+  it('una respuesta no válida no se guarda y se usa la última buena', async () => {
+    const { clock, cache } = setup();
+    cache.write('/product', ['guardado']);
+    clock.now = CACHE_TTL_MS;
+    const fetchFresh = vi.fn(() => Promise.resolve([1, 2]));
+
+    const result = await fetchWithCache(cache, '/product', fetchFresh, parseNames);
+
+    expect(result).toEqual({ data: ['guardado'], isStale: true });
+    expect(cache.read('/product')?.body).toEqual(['guardado']);
+  });
+
+  it('una respuesta no válida sin nada guardado propaga el error de validación', async () => {
+    const { cache } = setup();
+    const fetchFresh = vi.fn(() => Promise.resolve([1, 2]));
+
+    const result = fetchWithCache(cache, '/product', fetchFresh, parseNames);
+
+    await expect(result).rejects.toBeInstanceOf(z.ZodError);
+    expect(cache.read('/product')).toBeNull();
+  });
+
+  it('ignora los datos guardados que ya no son válidos y los pide de nuevo', async () => {
+    const { cache } = setup();
+    cache.write('/product', [1, 2]);
+    const fetchFresh = vi.fn(() => Promise.resolve(['nuevo']));
+
+    const result = await fetchWithCache(cache, '/product', fetchFresh, parseNames);
+
+    expect(result).toEqual({ data: ['nuevo'], isStale: false });
+    expect(fetchFresh).toHaveBeenCalledOnce();
   });
 });
