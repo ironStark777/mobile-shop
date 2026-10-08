@@ -1,0 +1,69 @@
+{
+  "id": "Vrfi9vZJ1Cz3icKjSJ-24",
+  "brand": "Acer",
+  "model": "Iconia One 7 B1-730",
+  "price": "90",
+  "imgUrl": "https://itx-frontend-test.onrender.com/images/Vrfi9vZJ1Cz3icKjSJ-24.jpg",
+  "networkTechnology": "No cellular connectivity",
+  "networkSpeed": "",
+  "gprs": "No",
+  "edge": "No",
+  "announced": "2014  April",
+  "status": "Available. Released 2014  June",
+  "dimentions": "8.9 mm thickness",
+  "weight": "",
+  "sim": "No",
+  "displayType": "IPS LCD capacitive touchscreen",
+  "displayResolution": "7.0 inches (~66.4% screen-to-body ratio)",
+  "displaySize": "800 x 1280 pixels (~216 ppi pixel density)",
+  "os": ["Android 4.2.2 (Jelly Bean)", "planned upgrade to 4.4.2 (KitKat)"],
+  "cpu": "Dual-core 1.6 GHz",
+  "chipset": "Intel Atom Z2560",
+  "gpu": "PowerVR SGX544MP2",
+  "externalMemory": "microSD  up to 32 GB (dedicated slot)",
+  "internalMemory": ["8 GB"],
+  "ram": "1 GB RAM",
+  "primaryCamera": "5 MP",
+  "secondaryCmera": "Yes",
+  "speaker": "Yes with stereo speakers",
+  "audioJack": "Yes",
+  "wlan": "Wi-Fi 802.11 b/g/n",
+  "bluetooth": "Yes",
+  "gps": "No",
+  "nfc": "",
+  "radio": "No",
+  "usb": "microUSB 2.0",
+  "sensors": "Accelerometer",
+  "battery": "Non-removable Li-Ion 3700 mAh battery",
+  "colors": ["Red", "white", "black", "blue", "pink"],
+  "options": {
+    "colors": [
+      {
+        "code": 1000,
+        "name": "Red"
+      },
+      {
+        "code": 1001,
+        "name": "white"
+      },
+      {
+        "code": 1002,
+        "name": "black"
+      },
+      {
+        "code": 1003,
+        "name": "blue"
+      },
+      {
+        "code": 1004,
+        "name": "pink"
+      }
+    ],
+    "storages": [
+      {
+        "code": 2000,
+        "name": "8 GB"
+      }
+    ]
+  }
+}

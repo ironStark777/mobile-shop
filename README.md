@@ -34,6 +34,7 @@ La aplicación queda disponible en http://localhost:5173.
 - **React 19** como librería de interfaz.
 - **TypeScript** en modo estricto. El enunciado permite JavaScript ES6; se usa TypeScript para detectar errores en tiempo de compilación y documentar los contratos con el API.
 - **Vite** como servidor de desarrollo y empaquetador para producción.
+- **Zod** para validar las respuestas del API en tiempo de ejecución. El enunciado solo documenta el `id`; el resto del contrato se dedujo de las respuestas reales y se describe en un esquema que se comprueba en cada respuesta. Solo son obligatorios el id, la marca y el modelo: un dato con un formato inesperado se muestra como no disponible en lugar de romper la página.
 - **React Compiler**, que memoiza componentes y valores al compilar. Por eso el código no lleva `useMemo`, `useCallback` ni `memo` escritos a mano.
 - **ESLint** con typescript-eslint (reglas estrictas con información de tipos) y los plugins oficiales de React Hooks y React Refresh.
 - **Prettier** para el formato del código. ESLint se encarga de detectar errores y Prettier del estilo; `eslint-config-prettier` evita que se pisen.

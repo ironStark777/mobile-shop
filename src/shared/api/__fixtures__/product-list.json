@@ -1,0 +1,30 @@
+[
+  {
+    "id": "ZmGrkLRPXOTpxsU4jjAcv",
+    "brand": "Acer",
+    "model": "Iconia Talk S",
+    "price": "170",
+    "imgUrl": "https://itx-frontend-test.onrender.com/images/ZmGrkLRPXOTpxsU4jjAcv.jpg"
+  },
+  {
+    "id": "Vrfi9vZJ1Cz3icKjSJ-24",
+    "brand": "Acer",
+    "model": "Iconia One 7 B1-730",
+    "price": "90",
+    "imgUrl": "https://itx-frontend-test.onrender.com/images/Vrfi9vZJ1Cz3icKjSJ-24.jpg"
+  },
+  {
+    "id": "mQWbDUsIUEPZy2My8Qxvl",
+    "brand": "Acer",
+    "model": "DX650",
+    "price": "150",
+    "imgUrl": "https://itx-frontend-test.onrender.com/images/mQWbDUsIUEPZy2My8Qxvl.jpg"
+  },
+  {
+    "id": "AasKFs5EGbyAEIKkcHQcF",
+    "brand": "alcatel",
+    "model": "Flash (2017)",
+    "price": "",
+    "imgUrl": "https://itx-frontend-test.onrender.com/images/AasKFs5EGbyAEIKkcHQcF.jpg"
+  }
+]

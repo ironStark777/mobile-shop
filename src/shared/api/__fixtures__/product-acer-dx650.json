@@ -1,0 +1,53 @@
+{
+  "id": "mQWbDUsIUEPZy2My8Qxvl",
+  "brand": "Acer",
+  "model": "DX650",
+  "price": "150",
+  "imgUrl": "https://itx-frontend-test.onrender.com/images/mQWbDUsIUEPZy2My8Qxvl.jpg",
+  "networkTechnology": "GSM",
+  "networkSpeed": "",
+  "gprs": "Class 10",
+  "edge": "Class 10",
+  "announced": "2009  June. Released 2009  June",
+  "status": "Discontinued",
+  "dimentions": "109.6 x 59 x 15.6 mm (4.31 x 2.32 x 0.61 in)",
+  "weight": "133",
+  "sim": "Mini-SIM",
+  "displayType": "TFT resistive touchscreen  65K colors",
+  "displayResolution": "2.8 inches (~37.5% screen-to-body ratio)",
+  "displaySize": "240 x 320 pixels (~143 ppi pixel density)",
+  "os": "Microsoft Windows Mobile 6.1 Professional",
+  "cpu": "Samsung S3C 6410 533 MHz",
+  "chipset": "",
+  "gpu": "",
+  "externalMemory": "microSD (dedicated slot)",
+  "internalMemory": [" "],
+  "ram": "",
+  "primaryCamera": "2 MP",
+  "secondaryCmera": "No",
+  "speaker": "Yes",
+  "audioJack": "No",
+  "wlan": "Wi-Fi 802.11 b/g",
+  "bluetooth": ["2.0", "A2DP"],
+  "gps": "Yes SiRF Star III chipset",
+  "nfc": "",
+  "radio": "FM radio",
+  "usb": "miniUSB",
+  "sensors": "Accelerometer",
+  "battery": "Removable Li-Ion 1260 mAh battery",
+  "colors": ["Black"],
+  "options": {
+    "colors": [
+      {
+        "code": 1000,
+        "name": "Black"
+      }
+    ],
+    "storages": [
+      {
+        "code": 2000,
+        "name": " "
+      }
+    ]
+  }
+}
