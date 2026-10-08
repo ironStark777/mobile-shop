@@ -16,6 +16,14 @@ npm start
 
 La aplicación queda disponible en http://localhost:5173.
 
+## Configuración
+
+Por defecto, la aplicación usa el API del enunciado. Para usar otro (por ejemplo, un mock local), crea un fichero `.env.local` en la raíz con:
+
+```bash
+VITE_API_BASE_URL=http://localhost:3000/api
+```
+
 ## Scripts
 
 | Script                 | Qué hace                                                                                             |
