@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import type { ProductDetail, ProductOption, ProductSummary } from '../model/product';
+import type { ProductDetail, ProductOption, ProductSummary } from './product';
 import {
   productDetailDtoSchema,
   productSummaryDtoSchema,
