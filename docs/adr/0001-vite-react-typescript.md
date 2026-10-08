@@ -25,7 +25,7 @@ El proyecto usa **Vite 8** como servidor de desarrollo y empaquetador, **React 1
 
 | Elemento                        | Valor                                       | Motivo                                                                                       |
 | ------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Node                            | 24 LTS (`.nvmrc`), mínimo 22.12 (`engines`) | Vitest 5, que se añade después, exige Node 22.12; se fija desde el principio                 |
+| Node                            | 24 LTS (`.nvmrc`), mínimo 22.22 (`engines`) | Lo exige jsdom, el entorno en el que se ejecutan los tests                                   |
 | `vite` / `@vitejs/plugin-react` | `^8.3.0` / `^6.1.1`                         | Versiones actuales                                                                           |
 | `react` / `react-dom`           | `^19.3.0`                                   | Versión actual                                                                               |
 | `typescript`                    | `~6.0.2`                                    | Solo parches: typescript-eslint, que se añade después, admite hasta la 6.0.x                 |
@@ -44,7 +44,7 @@ El proyecto usa **Vite 8** como servidor de desarrollo y empaquetador, **React 1
 | Situación                                                             | Comportamiento                                                                                            |
 | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | Error de tipos                                                        | `npm start` sigue funcionando (Vite no comprueba tipos); el error se ve en el IDE y `npm run build` falla |
-| Node inferior a 22.12                                                 | npm muestra un aviso (`EBADENGINE`) al instalar; con versiones antiguas las herramientas no arrancan      |
+| Node inferior al mínimo de `engines`                                  | npm muestra un aviso (`EBADENGINE`) al instalar; con versiones antiguas las herramientas no arrancan      |
 | Recarga en una ruta interna en producción sin fallback a `index.html` | El servidor responde 404                                                                                  |
 
 ## Alternativas consideradas

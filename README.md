@@ -4,7 +4,7 @@ Mini aplicación (SPA) para comprar dispositivos móviles. Tiene dos vistas: el 
 
 ## Requisitos
 
-- Node.js 24 LTS (mínimo 22.12). Si usas nvm, `nvm use` coge la versión del `.nvmrc`.
+- Node.js 24 LTS (mínimo 22.22). Si usas nvm, `nvm use` coge la versión del `.nvmrc`.
 - npm 10 o superior.
 
 ## Puesta en marcha
@@ -23,11 +23,11 @@ La aplicación queda disponible en http://localhost:5173.
 | `npm start`            | Servidor de desarrollo con recarga en caliente.                                                      |
 | `npm run build`        | Comprueba tipos y genera la build de producción en `dist/`.                                          |
 | `npm run preview`      | Sirve en local la build de producción.                                                               |
+| `npm test`             | Ejecuta los tests una vez.                                                                           |
+| `npm run test:watch`   | Ejecuta los tests en modo watch: se relanzan al guardar.                                             |
 | `npm run lint`         | Analiza el código con ESLint (reglas de TypeScript con tipos y de React). Falla con cualquier aviso. |
 | `npm run format`       | Formatea todo el código con Prettier.                                                                |
 | `npm run format:check` | Comprueba el formato sin modificar nada.                                                             |
-
-El script de tests se añade en un commit posterior, junto con su herramienta.
 
 ## Stack
 
@@ -36,6 +36,7 @@ El script de tests se añade en un commit posterior, junto con su herramienta.
 - **Vite** como servidor de desarrollo y empaquetador para producción.
 - **ESLint** con typescript-eslint (reglas estrictas con información de tipos) y los plugins oficiales de React Hooks y React Refresh.
 - **Prettier** para el formato del código. ESLint se encarga de detectar errores y Prettier del estilo; `eslint-config-prettier` evita que se pisen.
+- **Vitest** y **Testing Library** para los tests, sobre jsdom. Los tests comprueban lo que ve y hace el usuario, no los detalles internos de los componentes.
 
 ## Decisiones técnicas
 
