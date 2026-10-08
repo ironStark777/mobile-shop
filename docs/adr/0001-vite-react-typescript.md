@@ -23,17 +23,17 @@ El proyecto usa **Vite 8** como servidor de desarrollo y empaquetador, **React 1
 
 ## Configuración relevante
 
-| Elemento | Valor | Motivo |
-|---|---|---|
-| Node | 24 LTS (`.nvmrc`), mínimo 22.12 (`engines`) | Vitest 5, que se añade después, exige Node 22.12; se fija desde el principio |
-| `vite` / `@vitejs/plugin-react` | `^8.3.0` / `^6.1.1` | Versiones actuales |
-| `react` / `react-dom` | `^19.3.0` | Versión actual |
-| `typescript` | `~6.0.2` | Solo parches: typescript-eslint, que se añade después, admite hasta la 6.0.x |
-| `strict` | `true` | Comprobaciones de nulos, `any` implícito, etc. |
-| `noUncheckedIndexedAccess` | `true` | `lista[i]` es `T \| undefined`; obliga a contemplar el caso vacío |
-| `erasableSyntaxOnly` | `true` | Prohíbe sintaxis que genera código (`enum`, `namespace`); los tipos solo existen al compilar |
-| `noEmit` | `true` | `tsc` solo comprueba; el JavaScript lo genera Vite |
-| `jsx` | `react-jsx` | Runtime automático: no hace falta importar React en cada fichero |
+| Elemento                        | Valor                                       | Motivo                                                                                       |
+| ------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Node                            | 24 LTS (`.nvmrc`), mínimo 22.12 (`engines`) | Vitest 5, que se añade después, exige Node 22.12; se fija desde el principio                 |
+| `vite` / `@vitejs/plugin-react` | `^8.3.0` / `^6.1.1`                         | Versiones actuales                                                                           |
+| `react` / `react-dom`           | `^19.3.0`                                   | Versión actual                                                                               |
+| `typescript`                    | `~6.0.2`                                    | Solo parches: typescript-eslint, que se añade después, admite hasta la 6.0.x                 |
+| `strict`                        | `true`                                      | Comprobaciones de nulos, `any` implícito, etc.                                               |
+| `noUncheckedIndexedAccess`      | `true`                                      | `lista[i]` es `T \| undefined`; obliga a contemplar el caso vacío                            |
+| `erasableSyntaxOnly`            | `true`                                      | Prohíbe sintaxis que genera código (`enum`, `namespace`); los tipos solo existen al compilar |
+| `noEmit`                        | `true`                                      | `tsc` solo comprueba; el JavaScript lo genera Vite                                           |
+| `jsx`                           | `react-jsx`                                 | Runtime automático: no hace falta importar React en cada fichero                             |
 
 ## Salidas
 
@@ -41,11 +41,11 @@ El proyecto usa **Vite 8** como servidor de desarrollo y empaquetador, **React 1
 
 ## Errores y casos límite
 
-| Situación | Comportamiento |
-|---|---|
-| Error de tipos | `npm start` sigue funcionando (Vite no comprueba tipos); el error se ve en el IDE y `npm run build` falla |
-| Node inferior a 22.12 | npm muestra un aviso (`EBADENGINE`) al instalar; con versiones antiguas las herramientas no arrancan |
-| Recarga en una ruta interna en producción sin fallback a `index.html` | El servidor responde 404 |
+| Situación                                                             | Comportamiento                                                                                            |
+| --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Error de tipos                                                        | `npm start` sigue funcionando (Vite no comprueba tipos); el error se ve en el IDE y `npm run build` falla |
+| Node inferior a 22.12                                                 | npm muestra un aviso (`EBADENGINE`) al instalar; con versiones antiguas las herramientas no arrancan      |
+| Recarga en una ruta interna en producción sin fallback a `index.html` | El servidor responde 404                                                                                  |
 
 ## Alternativas consideradas
 

@@ -18,14 +18,14 @@ La aplicación queda disponible en http://localhost:5173.
 
 ## Scripts
 
-| Script            | Qué hace                                                                                       |
-| ----------------- | ---------------------------------------------------------------------------------------------- |
-| `npm start`       | Servidor de desarrollo con recarga en caliente.                                                |
-| `npm run build`   | Comprueba tipos y genera la build de producción en `dist/`.                                    |
-| `npm run preview` | Sirve en local la build de producción.                                                         |
-| `npm run lint`    | Analiza el código con ESLint (reglas de TypeScript con tipos y de React). Falla con cualquier aviso. |
-| `npm run format`  | Formatea todo el código con Prettier. |
-| `npm run format:check` | Comprueba el formato sin modificar nada. |
+| Script                 | Qué hace                                                                                             |
+| ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| `npm start`            | Servidor de desarrollo con recarga en caliente.                                                      |
+| `npm run build`        | Comprueba tipos y genera la build de producción en `dist/`.                                          |
+| `npm run preview`      | Sirve en local la build de producción.                                                               |
+| `npm run lint`         | Analiza el código con ESLint (reglas de TypeScript con tipos y de React). Falla con cualquier aviso. |
+| `npm run format`       | Formatea todo el código con Prettier.                                                                |
+| `npm run format:check` | Comprueba el formato sin modificar nada.                                                             |
 
 El script de tests se añade en un commit posterior, junto con su herramienta.
 
@@ -59,10 +59,10 @@ El proyecto se construye de forma incremental, con un commit por cambio siguiend
 
 Base: `https://itx-frontend-test.onrender.com`
 
-| Método | Ruta               | Uso                                                                              |
-| ------ | ------------------ | -------------------------------------------------------------------------------- |
-| GET    | `/api/product`     | Listado de productos                                                             |
-| GET    | `/api/product/:id` | Detalle de un producto                                                           |
+| Método | Ruta               | Uso                                                                            |
+| ------ | ------------------ | ------------------------------------------------------------------------------ |
+| GET    | `/api/product`     | Listado de productos                                                           |
+| GET    | `/api/product/:id` | Detalle de un producto                                                         |
 | POST   | `/api/cart`        | Añadir a la cesta. Body `{ id, colorCode, storageCode }`, responde `{ count }` |
 
 El API está alojado en un plan gratuito, así que la primera petición tras un rato sin uso puede tardar bastante mientras el servicio arranca.
