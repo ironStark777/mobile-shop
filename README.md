@@ -34,6 +34,7 @@ La aplicación queda disponible en http://localhost:5173.
 - **React 19** como librería de interfaz.
 - **TypeScript** en modo estricto. El enunciado permite JavaScript ES6; se usa TypeScript para detectar errores en tiempo de compilación y documentar los contratos con el API.
 - **Vite** como servidor de desarrollo y empaquetador para producción.
+- **React Compiler**, que memoiza componentes y valores al compilar. Por eso el código no lleva `useMemo`, `useCallback` ni `memo` escritos a mano.
 - **ESLint** con typescript-eslint (reglas estrictas con información de tipos) y los plugins oficiales de React Hooks y React Refresh.
 - **Prettier** para el formato del código. ESLint se encarga de detectar errores y Prettier del estilo; `eslint-config-prettier` evita que se pisen.
 - **Vitest** y **Testing Library** para los tests, sobre jsdom. Los tests comprueban lo que ve y hace el usuario, no los detalles internos de los componentes.
@@ -48,7 +49,7 @@ Las decisiones relevantes se documentan como ADR (Architecture Decision Record) 
 
 El proyecto se construye de forma incremental, con un commit por cambio siguiendo [Conventional Commits](https://www.conventionalcommits.org/).
 
-- [ ] 1. Proyecto base y herramientas: lint, formato y tests.
+- [x] 1. Proyecto base y herramientas: lint, formato y tests.
 - [ ] 2. Capa de datos: modelos, cliente del API y caché con expiración de 1 hora.
 - [ ] 3. Layout: cabecera con logo, breadcrumbs y contador de la cesta; enrutado.
 - [ ] 4. Listado de productos y buscador en tiempo real.
