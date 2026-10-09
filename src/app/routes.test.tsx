@@ -1,4 +1,5 @@
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import acerIconiaTalkS from '../entities/product/__fixtures__/product-acer-iconia-talk-s.json';
@@ -26,6 +27,18 @@ describe('createRoutes', () => {
 
     expect(await screen.findByRole('heading', { level: 1, name: 'Móviles' })).toBeInTheDocument();
     expect(screen.getByText('4 productos')).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(4);
+  });
+
+  it('al pulsar un producto del listado, muestra su detalle', async () => {
+    const user = userEvent.setup();
+    renderRoute('/');
+
+    await user.click(await screen.findByRole('link', { name: 'Acer Iconia Talk S' }));
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Acer Iconia Talk S' }),
+    ).toBeInTheDocument();
   });
 
   it('en /product/:id carga el detalle con la señal de cancelación de la petición', async () => {

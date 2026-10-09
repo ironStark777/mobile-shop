@@ -1,0 +1,71 @@
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  border-radius: var(--radius-panel);
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  margin-block-end: var(--space-2);
+  border-radius: var(--radius-panel);
+  background-color: var(--color-surface);
+}
+
+/*
+ * La foto ocupa el panel sin agrandarse nunca por encima de su tamaño real (`scale-down`).
+ * Las del API tienen fondo blanco: `multiply` lo funde con el gris del panel.
+ */
+.image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: var(--space-6);
+  object-fit: scale-down;
+  mix-blend-mode: multiply;
+}
+
+.title {
+  font-size: var(--font-size-md);
+}
+
+.brand {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-muted);
+}
+
+.link {
+  text-decoration: none;
+}
+
+/* Toda la tarjeta se puede pulsar sin meter todo su contenido dentro del enlace. */
+.link::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.card:hover .link {
+  color: var(--color-accent);
+}
+
+.price {
+  font-variant-numeric: tabular-nums;
+}
+
+/* El foco se dibuja alrededor de toda la tarjeta, que es la zona que se puede pulsar. */
+@supports selector(:has(*)) {
+  .link:focus-visible {
+    outline: none;
+  }
+
+  .card:has(.link:focus-visible) {
+    outline: var(--focus-ring-width) solid var(--color-accent);
+    outline-offset: var(--focus-ring-offset);
+  }
+}

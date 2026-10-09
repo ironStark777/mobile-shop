@@ -1,0 +1,20 @@
+.count {
+  color: var(--color-text-muted);
+}
+
+/*
+ * Como mucho 4 columnas: cada columna mide al menos la cuarta parte del ancho, descontando los
+ * 3 huecos entre ellas. En pantallas estrechas manda el ancho mínimo de la tarjeta y caben menos.
+ */
+.grid {
+  --card-min-width: 10rem;
+  --column-gap: var(--space-4);
+  --column-min-width: max(var(--card-min-width), (100% - 3 * var(--column-gap)) / 4);
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--column-min-width)), 1fr));
+  gap: var(--space-8) var(--column-gap);
+  align-self: stretch;
+  padding: 0;
+  list-style: none;
+}

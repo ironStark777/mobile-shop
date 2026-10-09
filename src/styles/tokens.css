@@ -11,6 +11,7 @@
   --color-bg: #ffffff;
   --color-text: #000000;
   --color-text-muted: #5c5c5c;
+  --color-surface: #f3f3f3;
   --color-line: #e3e3e3;
   --color-accent: #3d2bf0;
 
@@ -21,6 +22,7 @@
   --font-size-lg: 1.25rem;
   --font-size-xl: 1.5625rem;
   --font-size-2xl: 2rem;
+  --font-weight-regular: 400;
   --font-weight-semibold: 600;
   --line-height-body: 1.5;
   --line-height-heading: 1.2;
@@ -28,9 +30,14 @@
   --measure: 65ch;
 
   /* Espaciado, en múltiplos de 4 px. */
+  --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-4: 1rem;
+  --space-6: 1.5rem;
   --space-8: 2rem;
+
+  /* Forma: las fotos van en paneles con las esquinas redondeadas de una pantalla de móvil. */
+  --radius-panel: 1.25rem;
 
   /* Bordes y foco */
   --border-width: 1px;
