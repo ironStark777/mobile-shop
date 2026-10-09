@@ -1,14 +1,20 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { App } from './app/App';
+import { createBrowserRouter } from 'react-router';
+import { RouterProvider } from 'react-router/dom';
+import { createRoutes } from './app/routes';
+import { productApi } from './entities/product/productApi';
 
 const container = document.getElementById('root');
 if (!container) {
   throw new Error('No se ha encontrado el elemento #root en index.html');
 }
 
+// El router se crea fuera de React y empieza a cargar los datos de la primera página al momento.
+const router = createBrowserRouter(createRoutes({ productApi }));
+
 createRoot(container).render(
   <StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </StrictMode>,
 );

@@ -42,6 +42,7 @@ VITE_API_BASE_URL=http://localhost:3000/api
 - **React 19** como librería de interfaz.
 - **TypeScript** en modo estricto. El enunciado permite JavaScript ES6; se usa TypeScript para detectar errores en tiempo de compilación y documentar los contratos con el API.
 - **Vite** como servidor de desarrollo y empaquetador para producción.
+- **React Router 8** en modo datos (`createBrowserRouter`). La navegación ocurre en el cliente y cada ruta carga sus datos con un `loader` antes de mostrarse.
 - **Zod** para validar las respuestas del API en tiempo de ejecución. El enunciado solo documenta el `id`; el resto del contrato se dedujo de las respuestas reales y se describe en un esquema que se comprueba en cada respuesta. Solo son obligatorios el id, la marca y el modelo: un dato con un formato inesperado se muestra como no disponible en lugar de romper la página.
 - **React Compiler**, que memoiza componentes y valores al compilar. Por eso el código no lleva `useMemo`, `useCallback` ni `memo` escritos a mano.
 - **ESLint** con typescript-eslint (reglas estrictas con información de tipos) y los plugins oficiales de React Hooks y React Refresh.
