@@ -56,6 +56,7 @@ Las decisiones relevantes se documentan como ADR (Architecture Decision Record) 
 
 - [ADR-0001](docs/adr/0001-vite-react-typescript.md): Vite, React y TypeScript como base del proyecto.
 - [ADR-0002](docs/adr/0002-cache-de-respuestas-del-api.md): caché de las respuestas del API en `localStorage`, con 1 hora de vigencia.
+- [ADR-0003](docs/adr/0003-carga-de-datos-con-loaders.md): carga de datos con los loaders de React Router.
 
 ## Hitos
 
@@ -63,7 +64,7 @@ El proyecto se construye de forma incremental, con un commit por cambio siguiend
 
 - [x] 1. Proyecto base y herramientas: lint, formato y tests.
 - [x] 2. Capa de datos: modelos, cliente del API y caché con expiración de 1 hora.
-- [ ] 3. Layout: cabecera con logo y breadcrumbs; enrutado.
+- [x] 3. Layout: cabecera con logo y breadcrumbs; enrutado.
 - [ ] 4. Listado de productos y buscador en tiempo real.
 - [ ] 5. Detalle de producto: imagen y descripción.
 - [ ] 6. Acciones: selectores de almacenamiento y color, añadir a la cesta y contador persistido.
