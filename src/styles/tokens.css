@@ -1,0 +1,43 @@
+/*
+ * Tokens de diseño: los componentes usan estas variables, nunca valores sueltos.
+ * La interfaz es monocroma; el color de acento se reserva para lo que se puede tocar o se ha
+ * elegido: foco, enlaces al pasar el puntero, opción seleccionada y contador de la cesta.
+ * Cada token se añade cuando lo usa algún componente.
+ */
+:root {
+  color-scheme: light;
+
+  /* Color. Contraste sobre el fondo: texto 21:1, secundario 6,7:1, acento 7,5:1. */
+  --color-bg: #ffffff;
+  --color-text: #000000;
+  --color-text-muted: #5c5c5c;
+  --color-line: #e3e3e3;
+  --color-accent: #3d2bf0;
+
+  /* Tipografía: la del sistema, con una escala de razón 1,25. */
+  --font-family-base: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.5625rem;
+  --font-size-2xl: 2rem;
+  --font-weight-semibold: 600;
+  --line-height-body: 1.5;
+  --line-height-heading: 1.2;
+  --letter-spacing-tight: -0.01em;
+  --measure: 65ch;
+
+  /* Espaciado, en múltiplos de 4 px. */
+  --space-2: 0.5rem;
+  --space-4: 1rem;
+  --space-8: 2rem;
+
+  /* Bordes y foco */
+  --border-width: 1px;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* Maquetación */
+  --content-max-width: 75rem;
+  --page-gutter: clamp(1rem, 4vw, 2.5rem);
+}

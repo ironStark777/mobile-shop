@@ -43,6 +43,7 @@ VITE_API_BASE_URL=http://localhost:3000/api
 - **TypeScript** en modo estricto. El enunciado permite JavaScript ES6; se usa TypeScript para detectar errores en tiempo de compilación y documentar los contratos con el API.
 - **Vite** como servidor de desarrollo y empaquetador para producción.
 - **React Router 8** en modo datos (`createBrowserRouter`). La navegación ocurre en el cliente y cada ruta carga sus datos con un `loader` antes de mostrarse.
+- **CSS nativo**, sin frameworks de estilos. Los tokens de diseño (color, tipografía, espaciado) son variables CSS en `src/styles/tokens.css`, y cada componente tiene su CSS Module.
 - **Zod** para validar las respuestas del API en tiempo de ejecución. El enunciado solo documenta el `id`; el resto del contrato se dedujo de las respuestas reales y se describe en un esquema que se comprueba en cada respuesta. Solo son obligatorios el id, la marca y el modelo: un dato con un formato inesperado se muestra como no disponible en lugar de romper la página.
 - **React Compiler**, que memoiza componentes y valores al compilar. Por eso el código no lleva `useMemo`, `useCallback` ni `memo` escritos a mano.
 - **ESLint** con typescript-eslint (reglas estrictas con información de tipos) y los plugins oficiales de React Hooks y React Refresh.
@@ -62,7 +63,7 @@ El proyecto se construye de forma incremental, con un commit por cambio siguiend
 
 - [x] 1. Proyecto base y herramientas: lint, formato y tests.
 - [x] 2. Capa de datos: modelos, cliente del API y caché con expiración de 1 hora.
-- [ ] 3. Layout: cabecera con logo, breadcrumbs y contador de la cesta; enrutado.
+- [ ] 3. Layout: cabecera con logo y breadcrumbs; enrutado.
 - [ ] 4. Listado de productos y buscador en tiempo real.
 - [ ] 5. Detalle de producto: imagen y descripción.
 - [ ] 6. Acciones: selectores de almacenamiento y color, añadir a la cesta y contador persistido.

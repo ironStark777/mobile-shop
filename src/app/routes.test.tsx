@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import acerIconiaTalkS from '../entities/product/__fixtures__/product-acer-iconia-talk-s.json';
@@ -68,5 +68,38 @@ describe('createRoutes', () => {
     expect(
       await screen.findByRole('heading', { level: 1, name: 'Página no encontrada' }),
     ).toBeInTheDocument();
+  });
+});
+
+describe('cabecera', () => {
+  it('el nombre de la tienda enlaza al listado', async () => {
+    renderRoute('/no-existe');
+
+    expect(await screen.findByRole('link', { name: 'Mobile Shop' })).toHaveAttribute('href', '/');
+  });
+
+  it('en el listado, las migas marcan Móviles como página actual', async () => {
+    renderRoute('/');
+
+    const breadcrumbs = await screen.findByRole('navigation', { name: 'Migas de pan' });
+    expect(within(breadcrumbs).getByText('Móviles')).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('en el detalle, las migas enlazan al listado y marcan el producto como actual', async () => {
+    renderRoute('/product/ZmGrkLRPXOTpxsU4jjAcv');
+
+    await screen.findByRole('heading', { level: 1, name: 'Acer Iconia Talk S' });
+    const breadcrumbs = screen.getByRole('navigation', { name: 'Migas de pan' });
+    expect(within(breadcrumbs).getByRole('link', { name: 'Móviles' })).toHaveAttribute('href', '/');
+    const current = within(breadcrumbs).getByText('Acer Iconia Talk S');
+    expect(current).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('en una dirección desconocida, las migas muestran la página no encontrada', async () => {
+    renderRoute('/no-existe');
+
+    const breadcrumbs = await screen.findByRole('navigation', { name: 'Migas de pan' });
+    const current = within(breadcrumbs).getByText('Página no encontrada');
+    expect(current).toHaveAttribute('aria-current', 'page');
   });
 });

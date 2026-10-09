@@ -4,6 +4,7 @@ import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { createRoutes } from './app/routes';
 import { productApi } from './entities/product/productApi';
+import './styles/global.css';
 
 const container = document.getElementById('root');
 if (!container) {

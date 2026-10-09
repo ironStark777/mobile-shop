@@ -8,6 +8,7 @@ import { InitialLoading } from './InitialLoading';
 import { NotFoundPage } from './NotFoundPage';
 import { RootLayout } from './RootLayout';
 import { RouteError } from './RouteError';
+import { routeIds } from './routeIds';
 
 export interface AppServices {
   readonly productApi: ProductApi;
@@ -34,11 +35,12 @@ export function createRoutes({ productApi }: AppServices): RouteObject[] {
               Component: ProductListPage,
             },
             {
+              id: routeIds.productDetail,
               path: 'product/:id',
               loader: createProductDetailLoader(productApi),
               Component: ProductDetailPage,
             },
-            { path: '*', Component: NotFoundPage },
+            { id: routeIds.notFound, path: '*', Component: NotFoundPage },
           ],
         },
       ],
