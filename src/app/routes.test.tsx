@@ -2,6 +2,7 @@ import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
+import type { CartApi } from '../entities/cart/cartApi';
 import { createCartStore } from '../entities/cart/cartStore';
 import { CartStoreContext } from '../entities/cart/useCartCount';
 import acerIconiaTalkS from '../entities/product/__fixtures__/product-acer-iconia-talk-s.json';
@@ -30,15 +31,17 @@ function renderRoute(path: string, overrides: Partial<ProductApi> = {}) {
     getProductById: vi.fn<ProductApi['getProductById']>().mockResolvedValue(detailResult),
     ...overrides,
   };
+  const cartApi: CartApi = { addToCart: vi.fn<CartApi['addToCart']>().mockResolvedValue(1) };
   // Una cesta nueva en cada test, para que lo que añade uno no afecte al siguiente.
   const cartStore = createCartStore(createMapStorage());
-  const router = createMemoryRouter(createRoutes({ productApi }), { initialEntries: [path] });
+  const routes = createRoutes({ productApi, cartApi, cartStore });
+  const router = createMemoryRouter(routes, { initialEntries: [path] });
   render(
     <CartStoreContext value={cartStore}>
       <RouterProvider router={router} />
     </CartStoreContext>,
   );
-  return { router, productApi, cartStore };
+  return { router, productApi, cartApi, cartStore };
 }
 
 describe('createRoutes', () => {
@@ -273,5 +276,54 @@ describe('detalle', () => {
     expect(await screen.findByText('3 de 4 productos')).toBeInTheDocument();
     const searchBox = screen.getByRole('searchbox', { name: 'Buscar por marca o modelo' });
     expect(searchBox).toHaveValue('acer');
+  });
+});
+
+describe('añadir a la cesta', () => {
+  const detailPath = '/product/ZmGrkLRPXOTpxsU4jjAcv';
+
+  it('muestra los selectores; si solo hay una opción, viene elegida', async () => {
+    renderRoute(detailPath);
+
+    const storage = await screen.findByRole('group', { name: 'Almacenamiento' });
+    expect(within(storage).getByRole('radio', { name: '16 GB' })).not.toBeChecked();
+    expect(within(storage).getByRole('radio', { name: '32 GB' })).not.toBeChecked();
+    const color = screen.getByRole('group', { name: 'Color' });
+    expect(within(color).getByRole('radio', { name: 'Black' })).toBeChecked();
+    expect(screen.getByRole('button', { name: 'Añadir' })).toBeDisabled();
+  });
+
+  it('al elegir y pulsar Añadir, envía la elección y muestra el número de la cesta', async () => {
+    const user = userEvent.setup();
+    const { cartApi } = renderRoute(detailPath);
+
+    await user.click(await screen.findByRole('radio', { name: '32 GB' }));
+    await user.click(screen.getByRole('button', { name: 'Añadir' }));
+
+    expect(await screen.findByText('Añadido a la cesta.')).toBeInTheDocument();
+    const call = vi.mocked(cartApi.addToCart).mock.lastCall;
+    expect(call?.[0]).toEqual({
+      productId: 'ZmGrkLRPXOTpxsU4jjAcv',
+      storageCode: 2001,
+      colorCode: 1000,
+    });
+    expect(call?.[1]?.signal).toBeInstanceOf(AbortSignal);
+    const header = screen.getByRole('banner');
+    expect(within(header).getByRole('status')).toHaveTextContent('Cesta 1');
+  });
+
+  it('si el API falla, lo dice y la cesta no cambia', async () => {
+    const user = userEvent.setup();
+    const { cartApi } = renderRoute(detailPath);
+    vi.mocked(cartApi.addToCart).mockRejectedValue(new Error('API caída'));
+
+    await user.click(await screen.findByRole('radio', { name: '16 GB' }));
+    await user.click(screen.getByRole('button', { name: 'Añadir' }));
+
+    expect(
+      await screen.findByText('No se ha podido añadir a la cesta. Inténtalo de nuevo.'),
+    ).toBeInTheDocument();
+    const header = screen.getByRole('banner');
+    expect(within(header).getByRole('status')).toHaveTextContent('Cesta 0');
   });
 });

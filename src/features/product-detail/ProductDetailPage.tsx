@@ -2,6 +2,7 @@ import { Link, useLoaderData, useLocation } from 'react-router';
 import { formatPrice } from '../../entities/product/formatPrice';
 import { ProductImage } from '../../entities/product/ProductImage';
 import { getReturnTo } from '../../shared/lib/returnTo';
+import { AddToCartForm } from './AddToCartForm';
 import styles from './ProductDetailPage.module.css';
 import type { ProductDetailData } from './productDetailLoader';
 import { getProductSpecs } from './productSpecs';
@@ -35,6 +36,8 @@ export function ProductDetailPage() {
               ))}
             </dl>
           </section>
+          {/* La key hace que, con otro producto, la elección empiece de cero. */}
+          <AddToCartForm key={product.id} product={product} />
         </div>
       </div>
     </>

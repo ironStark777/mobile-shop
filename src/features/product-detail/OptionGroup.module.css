@@ -1,0 +1,52 @@
+.group {
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  padding: 0 0 var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.option {
+  position: relative;
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-line-strong);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.option:hover {
+  border-color: var(--color-text);
+}
+
+.option:has(:checked) {
+  border-color: var(--color-accent);
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.option:has(:focus-visible) {
+  outline: var(--focus-ring-width) solid var(--color-accent);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* El botón de opción nativo cubre la píldora sin verse: el teclado y los lectores lo siguen usando. */
+.input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.empty {
+  color: var(--color-text-muted);
+}

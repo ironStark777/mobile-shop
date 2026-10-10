@@ -1,0 +1,43 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+
+.button {
+  padding: var(--space-2) var(--space-8);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--color-accent);
+}
+
+.button:disabled,
+.button[aria-disabled='true'] {
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.message {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.error {
+  font-size: var(--font-size-sm);
+  color: var(--color-danger);
+}

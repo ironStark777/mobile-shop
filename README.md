@@ -67,7 +67,7 @@ El proyecto se construye de forma incremental, con un commit por cambio siguiend
 - [x] 3. Layout: cabecera con logo y breadcrumbs; enrutado.
 - [x] 4. Listado de productos y buscador en tiempo real.
 - [x] 5. Detalle de producto: imagen y descripción.
-- [ ] 6. Acciones: selectores de almacenamiento y color, añadir a la cesta y contador persistido.
+- [x] 6. Acciones: selectores de almacenamiento y color, añadir a la cesta y contador persistido.
 - [ ] 7. Pulido: responsive, estados de carga y error, accesibilidad.
 
 ## API
@@ -83,3 +83,5 @@ Base: `https://itx-frontend-test.onrender.com`
 En las pruebas, la primera petición al API tras un rato sin uso tardó más de un minuto en responder.
 
 Las respuestas de los `GET` se guardan en `localStorage` durante 1 hora. Pasado ese tiempo se vuelven a pedir y, si el API falla o responde con datos no válidos, se usa la última respuesta válida guardada, marcada como no actualizada. El `POST` de la cesta nunca se guarda. Los detalles están en el [ADR-0002](docs/adr/0002-cache-de-respuestas-del-api.md).
+
+El contador de la cesta muestra el `count` que devuelve el `POST` y lo guarda en `localStorage`, así que se conserva al recargar. En las pruebas, desde el navegador el API respondió siempre `count: 1`, aunque se añadieran varios productos.
