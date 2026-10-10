@@ -65,7 +65,7 @@ El proyecto se construye de forma incremental, con un commit por cambio siguiend
 - [x] 1. Proyecto base y herramientas: lint, formato y tests.
 - [x] 2. Capa de datos: modelos, cliente del API y caché con expiración de 1 hora.
 - [x] 3. Layout: cabecera con logo y breadcrumbs; enrutado.
-- [ ] 4. Listado de productos y buscador en tiempo real.
+- [x] 4. Listado de productos y buscador en tiempo real.
 - [ ] 5. Detalle de producto: imagen y descripción.
 - [ ] 6. Acciones: selectores de almacenamiento y color, añadir a la cesta y contador persistido.
 - [ ] 7. Pulido: responsive, estados de carga y error, accesibilidad.

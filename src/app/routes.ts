@@ -3,7 +3,10 @@ import type { ProductApi } from '../entities/product/productApi';
 import { ProductDetailPage } from '../features/product-detail/ProductDetailPage';
 import { createProductDetailLoader } from '../features/product-detail/productDetailLoader';
 import { ProductListPage } from '../features/product-list/ProductListPage';
-import { createProductListLoader } from '../features/product-list/productListLoader';
+import {
+  createProductListLoader,
+  shouldRevalidateProductList,
+} from '../features/product-list/productListLoader';
 import { InitialLoading } from './InitialLoading';
 import { NotFoundPage } from './NotFoundPage';
 import { RootLayout } from './RootLayout';
@@ -32,6 +35,7 @@ export function createRoutes({ productApi }: AppServices): RouteObject[] {
             {
               index: true,
               loader: createProductListLoader(productApi),
+              shouldRevalidate: shouldRevalidateProductList,
               Component: ProductListPage,
             },
             {

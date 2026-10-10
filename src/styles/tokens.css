@@ -7,12 +7,13 @@
 :root {
   color-scheme: light;
 
-  /* Color. Contraste sobre el fondo: texto 21:1, secundario 6,7:1, acento 7,5:1. */
+  /* Color. Contraste sobre el fondo: texto 21:1, secundario 6,7:1, acento 7,5:1, bordes 3,5:1. */
   --color-bg: #ffffff;
   --color-text: #000000;
   --color-text-muted: #5c5c5c;
   --color-surface: #f3f3f3;
   --color-line: #e3e3e3;
+  --color-line-strong: #8a8a8a;
   --color-accent: #3d2bf0;
 
   /* Tipografía: la del sistema, con una escala de razón 1,25. */
@@ -36,8 +37,9 @@
   --space-6: 1.5rem;
   --space-8: 2rem;
 
-  /* Forma: las fotos van en paneles con las esquinas redondeadas de una pantalla de móvil. */
+  /* Forma: paneles de foto con las esquinas de una pantalla de móvil y controles en píldora. */
   --radius-panel: 1.25rem;
+  --radius-pill: 999px;
 
   /* Bordes y foco */
   --border-width: 1px;

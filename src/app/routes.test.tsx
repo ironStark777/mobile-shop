@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
@@ -19,6 +19,7 @@ function renderRoute(path: string, overrides: Partial<ProductApi> = {}) {
   };
   const router = createMemoryRouter(createRoutes({ productApi }), { initialEntries: [path] });
   render(<RouterProvider router={router} />);
+  return { router, productApi };
 }
 
 describe('createRoutes', () => {
@@ -114,5 +115,101 @@ describe('cabecera', () => {
     const breadcrumbs = await screen.findByRole('navigation', { name: 'Migas de pan' });
     const current = within(breadcrumbs).getByText('Página no encontrada');
     expect(current).toHaveAttribute('aria-current', 'page');
+  });
+});
+
+describe('buscador', () => {
+  const searchBoxName = 'Buscar por marca o modelo';
+
+  it('filtra por marca y modelo mientras se escribe, sin volver a pedir el listado', async () => {
+    const user = userEvent.setup();
+    const { router, productApi } = renderRoute('/');
+
+    await user.type(await screen.findByRole('searchbox', { name: searchBoxName }), 'iconia');
+
+    expect(await screen.findByText('2 de 4 productos')).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(2);
+    expect(router.state.location.search).toBe('?q=iconia');
+    expect(productApi.getProducts).toHaveBeenCalledOnce();
+  });
+
+  it('buscar no vuelve a pedir el listado, pero una revalidación explícita sí', async () => {
+    const user = userEvent.setup();
+    const { router, productApi } = renderRoute('/');
+
+    await user.type(await screen.findByRole('searchbox', { name: searchBoxName }), 'acer');
+    expect(await screen.findByText('3 de 4 productos')).toBeInTheDocument();
+    expect(productApi.getProducts).toHaveBeenCalledOnce();
+
+    await act(() => router.revalidate());
+    expect(productApi.getProducts).toHaveBeenCalledTimes(2);
+  });
+
+  it('al abrir una dirección con ?q= muestra el listado ya filtrado', async () => {
+    renderRoute('/?q=alcatel');
+
+    expect(await screen.findByRole('searchbox', { name: searchBoxName })).toHaveValue('alcatel');
+    expect(screen.getAllByRole('article')).toHaveLength(1);
+  });
+
+  it('si nada coincide, lo dice y sugiere cambiar la búsqueda', async () => {
+    renderRoute('/?q=nokia');
+
+    expect(await screen.findByText(/Ningún producto coincide con «nokia»/)).toBeInTheDocument();
+    expect(screen.queryByRole('article')).not.toBeInTheDocument();
+  });
+
+  it('no pierde letras al escribir muy rápido', async () => {
+    const user = userEvent.setup({ delay: null });
+    const { router } = renderRoute('/');
+
+    const searchBox = await screen.findByRole('searchbox', { name: searchBoxName });
+    await user.type(searchBox, 'iconia one');
+
+    expect(await screen.findByText('1 de 4 productos')).toBeInTheDocument();
+    expect(searchBox).toHaveValue('iconia one');
+    expect(router.state.location.search).toBe('?q=iconia+one');
+  });
+
+  it('al editar en mitad del texto, el cursor se queda donde estaba', async () => {
+    const user = userEvent.setup();
+    renderRoute('/');
+
+    const searchBox = await screen.findByRole('searchbox', { name: searchBoxName });
+    await user.type(searchBox, 'aer');
+    await user.keyboard('{ArrowLeft}{ArrowLeft}c');
+
+    expect(await screen.findByText('3 de 4 productos')).toBeInTheDocument();
+    expect(searchBox).toHaveValue('acer');
+    expect(searchBox).toHaveProperty('selectionStart', 2);
+  });
+
+  it('con atrás y adelante, el campo sigue a la URL', async () => {
+    const user = userEvent.setup();
+    const { router } = renderRoute('/');
+
+    const searchBox = await screen.findByRole('searchbox', { name: searchBoxName });
+    await user.type(searchBox, 'acer');
+    await user.click(screen.getByRole('link', { name: 'Mobile Shop' }));
+    expect(await screen.findByText('4 productos')).toBeInTheDocument();
+    expect(searchBox).toHaveValue('');
+
+    await act(() => router.navigate(-1));
+    expect(await screen.findByText('3 de 4 productos')).toBeInTheDocument();
+    expect(searchBox).toHaveValue('acer');
+
+    await act(() => router.navigate(1));
+    expect(await screen.findByText('4 productos')).toBeInTheDocument();
+    expect(searchBox).toHaveValue('');
+  });
+
+  it('al pulsar el logo se borra la búsqueda', async () => {
+    const user = userEvent.setup();
+    renderRoute('/?q=alcatel');
+
+    await user.click(await screen.findByRole('link', { name: 'Mobile Shop' }));
+
+    expect(await screen.findByText('4 productos')).toBeInTheDocument();
+    expect(screen.getByRole('searchbox', { name: searchBoxName })).toHaveValue('');
   });
 });
