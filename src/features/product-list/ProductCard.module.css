@@ -7,25 +7,7 @@
 }
 
 .media {
-  position: relative;
-  aspect-ratio: 4 / 5;
   margin-block-end: var(--space-2);
-  border-radius: var(--radius-panel);
-  background-color: var(--color-surface);
-}
-
-/*
- * La foto ocupa el panel sin agrandarse nunca por encima de su tamaño real (`scale-down`).
- * Las del API tienen fondo blanco: `multiply` lo funde con el gris del panel.
- */
-.image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  padding: var(--space-6);
-  object-fit: scale-down;
-  mix-blend-mode: multiply;
 }
 
 .title {

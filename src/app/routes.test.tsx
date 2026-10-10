@@ -213,3 +213,33 @@ describe('buscador', () => {
     expect(screen.getByRole('searchbox', { name: searchBoxName })).toHaveValue('');
   });
 });
+
+describe('detalle', () => {
+  it('muestra la foto, el precio y las especificaciones del producto', async () => {
+    renderRoute('/product/ZmGrkLRPXOTpxsU4jjAcv');
+
+    expect(await screen.findByRole('img', { name: 'Acer Iconia Talk S' })).toBeInTheDocument();
+    expect(screen.getByText('170 €')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: 'Especificaciones' })).toBeInTheDocument();
+    expect(screen.getByText('Quad-core 1.3 GHz Cortex-A53')).toBeInTheDocument();
+  });
+
+  it('si se entra directamente, el enlace de volver lleva al listado completo', async () => {
+    renderRoute('/product/ZmGrkLRPXOTpxsU4jjAcv');
+
+    const back = await screen.findByRole('link', { name: 'Volver al listado' });
+    expect(back).toHaveAttribute('href', '/');
+  });
+
+  it('al volver al listado se conserva la búsqueda', async () => {
+    const user = userEvent.setup();
+    renderRoute('/?q=acer');
+
+    await user.click(await screen.findByRole('link', { name: 'Acer Iconia Talk S' }));
+    await user.click(await screen.findByRole('link', { name: 'Volver al listado' }));
+
+    expect(await screen.findByText('3 de 4 productos')).toBeInTheDocument();
+    const searchBox = screen.getByRole('searchbox', { name: 'Buscar por marca o modelo' });
+    expect(searchBox).toHaveValue('acer');
+  });
+});
