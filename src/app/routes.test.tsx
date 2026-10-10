@@ -2,14 +2,27 @@ import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
+import { createCartStore } from '../entities/cart/cartStore';
+import { CartStoreContext } from '../entities/cart/useCartCount';
 import acerIconiaTalkS from '../entities/product/__fixtures__/product-acer-iconia-talk-s.json';
 import productList from '../entities/product/__fixtures__/product-list.json';
 import type { ProductApi } from '../entities/product/productApi';
 import { parseProductDetail, parseProductList } from '../entities/product/productMapper';
+import type { KeyValueStorage } from '../shared/lib/storage';
 import { createRoutes } from './routes';
 
 const listResult = { data: parseProductList(productList), isStale: false };
 const detailResult = { data: parseProductDetail(acerIconiaTalkS), isStale: false };
+
+function createMapStorage(): KeyValueStorage {
+  const map = new Map<string, string>();
+  return {
+    getItem: (key) => map.get(key) ?? null,
+    setItem: (key, value) => {
+      map.set(key, value);
+    },
+  };
+}
 
 function renderRoute(path: string, overrides: Partial<ProductApi> = {}) {
   const productApi: ProductApi = {
@@ -17,9 +30,15 @@ function renderRoute(path: string, overrides: Partial<ProductApi> = {}) {
     getProductById: vi.fn<ProductApi['getProductById']>().mockResolvedValue(detailResult),
     ...overrides,
   };
+  // Una cesta nueva en cada test, para que lo que añade uno no afecte al siguiente.
+  const cartStore = createCartStore(createMapStorage());
   const router = createMemoryRouter(createRoutes({ productApi }), { initialEntries: [path] });
-  render(<RouterProvider router={router} />);
-  return { router, productApi };
+  render(
+    <CartStoreContext value={cartStore}>
+      <RouterProvider router={router} />
+    </CartStoreContext>,
+  );
+  return { router, productApi, cartStore };
 }
 
 describe('createRoutes', () => {
@@ -61,7 +80,8 @@ describe('createRoutes', () => {
 
     renderRoute('/', { getProducts });
 
-    expect(await screen.findByRole('status')).toHaveTextContent('Cargando');
+    const main = await screen.findByRole('main');
+    expect(within(main).getByRole('status')).toHaveTextContent('Cargando');
   });
 
   it('si el API falla, muestra un error con un enlace al listado', async () => {
@@ -107,6 +127,18 @@ describe('cabecera', () => {
     expect(within(breadcrumbs).getByRole('link', { name: 'Móviles' })).toHaveAttribute('href', '/');
     const current = within(breadcrumbs).getByText('Acer Iconia Talk S');
     expect(current).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('a la derecha muestra el número de productos de la cesta', async () => {
+    const { cartStore } = renderRoute('/');
+
+    const header = await screen.findByRole('banner');
+    expect(within(header).getByRole('status')).toHaveTextContent('Cesta 0');
+
+    act(() => {
+      cartStore.setCount(3);
+    });
+    expect(within(header).getByRole('status')).toHaveTextContent('Cesta 3');
   });
 
   it('en una dirección desconocida, las migas muestran la página no encontrada', async () => {
