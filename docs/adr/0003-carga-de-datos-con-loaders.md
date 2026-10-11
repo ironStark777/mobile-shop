@@ -32,4 +32,4 @@ Cada ruta declara un `loader` (React Router 8 en modo datos) que pide sus datos 
 
 - **Positivas:** los componentes de página no gestionan estados de carga ni de error; las peticiones se cancelan al cambiar de página; la carga inicial y los errores se tratan en un solo sitio.
 - **Negativas / compromisos:** la navegación espera a que lleguen los datos, así que con un API lento no se ve ningún cambio hasta que responde. `useLoaderData<T>()` confía en el tipo que se le indica: el router no comprueba que coincida con lo que devuelve el loader.
-- **Pendiente:** un indicador de navegación en curso (`useNavigation`) y el aviso de datos no actualizados (`isStale`).
+- **Seguimiento:** en el hito 7 se añadieron el indicador de navegación en curso con `useNavigation` (`6410d6a`), el aviso de datos no actualizados con reintento mediante `useRevalidator` (`20c24a1`) y la gestión del foco al cambiar de página, que React Router deja a la aplicación (`abb54f7`).

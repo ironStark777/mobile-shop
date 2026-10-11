@@ -37,4 +37,4 @@ Los servicios devuelven `{ data, isStale }`: la interfaz recibe los datos y su e
 
 - **Positivas:** durante una hora, volver a una página ya visitada no espera al API; si el API falla, la app sigue mostrando la última información válida.
 - **Negativas / compromisos:** en uso normal los datos tienen como mucho una hora, pero el respaldo puede ser mucho más antiguo: un fallo nunca modifica `savedAt`, así que el dato conserva su antigüedad real y por eso se marca con `isStale`. La primera visita y las revalidaciones pueden sufrir la latencia del API, incluido su arranque en frío. Las entradas no se borran nunca: con un catálogo de 100 productos no se ha previsto una limpieza.
-- **Pendiente:** mostrar en la interfaz el aviso de `isStale` y un mensaje de carga cuando el API tarda en responder.
+- **Seguimiento:** en el hito 7 se añadieron el aviso de datos no actualizados, con un botón para reintentar (`20c24a1`), y el aviso cuando el API tarda en responder (`6410d6a`). Una petición cancelada se propaga sin usar el respaldo (`0bd7689`).
