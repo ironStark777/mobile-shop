@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react';
+import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
@@ -353,5 +353,139 @@ describe('añadir a la cesta', () => {
     ).toBeInTheDocument();
     const header = screen.getByRole('banner');
     expect(within(header).getByRole('status')).toHaveTextContent('Cesta 0');
+  });
+});
+
+describe('datos no actualizados', () => {
+  const staleNotice = /^No se han podido actualizar los datos\. Se muestran los últimos/;
+  const staleList = { ...listResult, isStale: true };
+  const detailPath = '/product/ZmGrkLRPXOTpxsU4jjAcv';
+
+  it('el listado avisa si muestra datos guardados', async () => {
+    const getProducts = vi.fn<ProductApi['getProducts']>().mockResolvedValue(staleList);
+    renderRoute('/', { getProducts });
+
+    expect(await screen.findByText(staleNotice)).toBeInTheDocument();
+  });
+
+  it('con datos recién pedidos, el listado no avisa', async () => {
+    renderRoute('/');
+
+    await screen.findByRole('heading', { level: 1, name: 'Móviles' });
+    expect(screen.queryByText(staleNotice)).not.toBeInTheDocument();
+  });
+
+  it('el detalle avisa antes del precio si muestra datos guardados', async () => {
+    const staleDetail = { ...detailResult, isStale: true };
+    const getProductById = vi.fn<ProductApi['getProductById']>().mockResolvedValue(staleDetail);
+    renderRoute(detailPath, { getProductById });
+
+    const notice = await screen.findByText(staleNotice);
+    const price = screen.getByText('170 €');
+    expect(notice.compareDocumentPosition(price)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+
+  it('con datos recién pedidos, el detalle no avisa', async () => {
+    renderRoute(detailPath);
+
+    await screen.findByRole('heading', { level: 1, name: 'Acer Iconia Talk S' });
+    expect(screen.queryByText(staleNotice)).not.toBeInTheDocument();
+  });
+
+  it('si el reintento sale bien, muestra los datos nuevos y quita el aviso', async () => {
+    const user = userEvent.setup();
+    const freshList = { data: listResult.data.slice(0, 2), isStale: false };
+    const getProducts = vi
+      .fn<ProductApi['getProducts']>()
+      .mockResolvedValueOnce(staleList)
+      .mockResolvedValue(freshList);
+    renderRoute('/', { getProducts });
+
+    await user.click(await screen.findByRole('button', { name: 'Reintentar' }));
+
+    expect(await screen.findByText('Datos actualizados.')).toBeInTheDocument();
+    expect(screen.getByText('2 productos')).toBeInTheDocument();
+    expect(screen.queryByText(staleNotice)).not.toBeInTheDocument();
+  });
+
+  it('si el reintento vuelve a fallar, lo anuncia y deja reintentar', async () => {
+    const user = userEvent.setup();
+    const getProducts = vi.fn<ProductApi['getProducts']>().mockResolvedValue(staleList);
+    renderRoute('/', { getProducts });
+
+    await user.click(await screen.findByRole('button', { name: 'Reintentar' }));
+
+    expect(await screen.findByText('No se han podido actualizar los datos.')).toBeInTheDocument();
+    expect(screen.getByText(staleNotice)).toBeInTheDocument();
+    expect(screen.getAllByRole('article')).toHaveLength(4);
+
+    await user.click(screen.getByRole('button', { name: 'Reintentar' }));
+    await waitFor(() => {
+      expect(getProducts).toHaveBeenCalledTimes(3);
+    });
+    expect(await screen.findByRole('button', { name: 'Reintentar' })).toBeInTheDocument();
+  });
+
+  describe('en el detalle, si el reintento trae otras opciones', () => {
+    const freshDetail = {
+      data: {
+        ...detailResult.data,
+        colors: [{ code: 1001, name: 'White' }],
+        storages: [
+          { code: 2001, name: '32 GB' },
+          { code: 2002, name: '64 GB' },
+        ],
+      },
+      isStale: false,
+    };
+
+    async function retryAfterChoosing(storageName: string) {
+      const user = userEvent.setup();
+      const getProductById = vi
+        .fn<ProductApi['getProductById']>()
+        .mockResolvedValueOnce({ ...detailResult, isStale: true })
+        .mockResolvedValue(freshDetail);
+      renderRoute(detailPath, { getProductById });
+
+      await user.click(await screen.findByRole('radio', { name: storageName }));
+      await user.click(screen.getByRole('button', { name: 'Reintentar' }));
+      await screen.findByText('Datos actualizados.');
+    }
+
+    it('conserva la elección que sigue existiendo y marca la nueva opción única', async () => {
+      await retryAfterChoosing('32 GB');
+
+      expect(screen.getByRole('radio', { name: '32 GB' })).toBeChecked();
+      expect(screen.getByRole('radio', { name: 'White' })).toBeChecked();
+      expect(screen.queryByRole('radio', { name: 'Black' })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Añadir' })).toBeEnabled();
+    });
+
+    it('si la opción elegida ya no existe, hay que volver a elegir', async () => {
+      await retryAfterChoosing('16 GB');
+
+      const storage = screen.getByRole('group', { name: 'Almacenamiento' });
+      for (const radio of within(storage).getAllByRole('radio')) {
+        expect(radio).not.toBeChecked();
+      }
+      expect(screen.getByRole('button', { name: 'Añadir' })).toBeDisabled();
+    });
+  });
+
+  it('mientras reintenta, lo indica y otro clic no vuelve a pedir los datos', async () => {
+    const user = userEvent.setup();
+    const neverResolves = new Promise<never>(() => undefined);
+    const getProducts = vi
+      .fn<ProductApi['getProducts']>()
+      .mockResolvedValueOnce(staleList)
+      .mockReturnValue(neverResolves);
+    renderRoute('/', { getProducts });
+
+    await user.click(await screen.findByRole('button', { name: 'Reintentar' }));
+
+    const retrying = await screen.findByRole('button', { name: 'Reintentando…' });
+    expect(retrying).toHaveAttribute('aria-disabled', 'true');
+    await user.click(retrying);
+    expect(getProducts).toHaveBeenCalledTimes(2);
   });
 });

@@ -1,4 +1,5 @@
-import { useLoaderData, useSearchParams } from 'react-router';
+import { useLoaderData, useRevalidator, useSearchParams } from 'react-router';
+import { StaleDataNotice } from '../../shared/ui/StaleDataNotice';
 import { filterProducts } from './filterProducts';
 import { ProductCard } from './ProductCard';
 import styles from './ProductListPage.module.css';
@@ -14,7 +15,8 @@ function describeCount(shown: number, total: number): string {
 }
 
 export function ProductListPage() {
-  const { data: products } = useLoaderData<ProductListData>();
+  const { data: products, isStale } = useLoaderData<ProductListData>();
+  const revalidator = useRevalidator();
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get(SEARCH_PARAM) ?? '';
   const visibleProducts = filterProducts(products, query);
@@ -36,6 +38,13 @@ export function ProductListPage() {
         </div>
         <SearchBox query={query} onQueryChange={handleQueryChange} />
       </div>
+      <StaleDataNotice
+        isStale={isStale}
+        isRetrying={revalidator.state !== 'idle'}
+        onRetry={() => {
+          void revalidator.revalidate();
+        }}
+      />
       {visibleProducts.length > 0 ? (
         <ul className={styles.grid}>
           {visibleProducts.map((product) => (

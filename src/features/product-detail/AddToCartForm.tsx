@@ -16,13 +16,26 @@ function getDefaultCode(options: readonly ProductOption[]): number | null {
 }
 
 /**
+ * La elección del usuario vale mientras la opción exista. Si al reintentar llegan otras opciones y
+ * ya no está, se vuelve a la opción por defecto.
+ */
+function resolveCode(options: readonly ProductOption[], chosenCode: number | null): number | null {
+  return chosenCode !== null && options.some((option) => option.code === chosenCode)
+    ? chosenCode
+    : getDefaultCode(options);
+}
+
+/**
  * Envía la elección a la action de la ruta con un fetcher: no navega, y no vuelve a pedir el
  * producto porque añadirlo a la cesta no cambia sus datos.
  */
 export function AddToCartForm({ product }: AddToCartFormProps) {
   const fetcher = useFetcher<AddToCartResult>();
-  const [storageCode, setStorageCode] = useState(() => getDefaultCode(product.storages));
-  const [colorCode, setColorCode] = useState(() => getDefaultCode(product.colors));
+  // Solo se guarda lo que elige el usuario; lo que se marca se calcula con las opciones actuales.
+  const [chosenStorageCode, setChosenStorageCode] = useState<number | null>(null);
+  const [chosenColorCode, setChosenColorCode] = useState<number | null>(null);
+  const storageCode = resolveCode(product.storages, chosenStorageCode);
+  const colorCode = resolveCode(product.colors, chosenColorCode);
   const isSubmitting = fetcher.state !== 'idle';
   // Mientras se envía no se muestra el resultado anterior: así el mensaje cambia, y se anuncia,
   // en cada envío.
@@ -45,14 +58,14 @@ export function AddToCartForm({ product }: AddToCartFormProps) {
         name="storageCode"
         options={product.storages}
         value={storageCode}
-        onChange={setStorageCode}
+        onChange={setChosenStorageCode}
       />
       <OptionGroup
         legend="Color"
         name="colorCode"
         options={product.colors}
         value={colorCode}
-        onChange={setColorCode}
+        onChange={setChosenColorCode}
       />
       <div className={styles.actions}>
         <button

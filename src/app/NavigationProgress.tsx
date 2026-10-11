@@ -26,7 +26,7 @@ function PendingMessage() {
 
   return (
     <>
-      <span className={styles.visuallyHidden}>Cargando…</span>
+      <span className="visually-hidden">Cargando…</span>
       {isSlow && <span className={styles.notice}>{SLOW_LOADING_MESSAGE}</span>}
     </>
   );
