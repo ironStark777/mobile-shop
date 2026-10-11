@@ -31,7 +31,7 @@ export function ProductListPage() {
       <title>Mobile Shop</title>
       <div className={styles.toolbar}>
         <div className={styles.heading}>
-          <h1>Móviles</h1>
+          <h1 tabIndex={-1}>Móviles</h1>
           <p role="status" className={styles.count}>
             {describeCount(visibleProducts.length, products.length)}
           </p>

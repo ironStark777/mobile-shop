@@ -8,7 +8,7 @@ export function RouteError() {
   return (
     <>
       <title>Error | Mobile Shop</title>
-      <h1>No se ha podido cargar la página</h1>
+      <h1 tabIndex={-1}>No se ha podido cargar la página</h1>
       <p>Puede que el producto no exista o que el servicio no esté disponible ahora mismo.</p>
       <Link to="/">Volver al listado</Link>
     </>

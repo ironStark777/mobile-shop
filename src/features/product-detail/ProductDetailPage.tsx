@@ -23,7 +23,7 @@ export function ProductDetailPage() {
       <div className={styles.layout}>
         <ProductImage src={product.imageUrl} alt={name} />
         <div className={styles.info}>
-          <h1>
+          <h1 tabIndex={-1}>
             <span className={styles.brand}>{product.brand}</span> {product.model}
           </h1>
           <StaleDataNotice

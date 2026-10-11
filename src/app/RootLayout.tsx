@@ -2,6 +2,7 @@ import { Outlet, ScrollRestoration, type Location } from 'react-router';
 import { Header } from './Header';
 import { NavigationProgress } from './NavigationProgress';
 import styles from './RootLayout.module.css';
+import { useFocusAfterNavigation } from './useFocusAfterNavigation';
 
 /**
  * El listado guarda una sola posición, sea cual sea la búsqueda: al volver del detalle o al
@@ -13,6 +14,8 @@ function getScrollKey(location: Location): string {
 }
 
 export function RootLayout() {
+  useFocusAfterNavigation();
+
   return (
     <>
       <NavigationProgress />

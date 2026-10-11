@@ -164,12 +164,12 @@ describe('cabecera', () => {
     const { cartStore } = renderRoute('/');
 
     const header = await screen.findByRole('banner');
-    expect(within(header).getByRole('status')).toHaveTextContent('Cesta 0');
+    expect(within(header).getByRole('status')).toHaveTextContent(/^Cesta: 0 productos$/);
 
     act(() => {
       cartStore.setCount(3);
     });
-    expect(within(header).getByRole('status')).toHaveTextContent('Cesta 3');
+    expect(within(header).getByRole('status')).toHaveTextContent(/^Cesta: 3 productos$/);
   });
 
   it('en una dirección desconocida, las migas muestran la página no encontrada', async () => {
@@ -337,7 +337,7 @@ describe('añadir a la cesta', () => {
     });
     expect(call?.[1]?.signal).toBeInstanceOf(AbortSignal);
     const header = screen.getByRole('banner');
-    expect(within(header).getByRole('status')).toHaveTextContent('Cesta 1');
+    expect(within(header).getByRole('status')).toHaveTextContent(/^Cesta: 1 producto$/);
   });
 
   it('si el API falla, lo dice y la cesta no cambia', async () => {
@@ -352,7 +352,7 @@ describe('añadir a la cesta', () => {
       await screen.findByText('No se ha podido añadir a la cesta. Inténtalo de nuevo.'),
     ).toBeInTheDocument();
     const header = screen.getByRole('banner');
-    expect(within(header).getByRole('status')).toHaveTextContent('Cesta 0');
+    expect(within(header).getByRole('status')).toHaveTextContent(/^Cesta: 0 productos$/);
   });
 });
 
@@ -472,6 +472,65 @@ describe('datos no actualizados', () => {
     });
   });
 
+  it('si el reintento sale bien con el foco en el botón, el foco pasa al título', async () => {
+    const user = userEvent.setup();
+    const getProducts = vi
+      .fn<ProductApi['getProducts']>()
+      .mockResolvedValueOnce(staleList)
+      .mockResolvedValue(listResult);
+    renderRoute('/', { getProducts });
+
+    await user.click(await screen.findByRole('button', { name: 'Reintentar' }));
+
+    await screen.findByText('Datos actualizados.');
+    const heading = screen.getByRole('heading', { level: 1, name: 'Móviles' });
+    await waitFor(() => {
+      expect(heading).toHaveFocus();
+    });
+  });
+
+  it('si durante la espera el usuario pasa a otro control, no le quita el foco', async () => {
+    const user = userEvent.setup();
+    let finishRetry: (result: typeof listResult) => void = () => undefined;
+    const pendingRetry = new Promise<typeof listResult>((resolve) => {
+      finishRetry = resolve;
+    });
+    const getProducts = vi
+      .fn<ProductApi['getProducts']>()
+      .mockResolvedValueOnce(staleList)
+      .mockReturnValue(pendingRetry);
+    renderRoute('/', { getProducts });
+
+    await user.click(await screen.findByRole('button', { name: 'Reintentar' }));
+    const searchBox = screen.getByRole('searchbox', { name: 'Buscar por marca o modelo' });
+    await user.click(searchBox);
+    finishRetry(listResult);
+
+    await screen.findByText('Datos actualizados.');
+    expect(searchBox).toHaveFocus();
+  });
+
+  it('si durante la espera se pulsa en una zona vacía, no lleva el foco al título', async () => {
+    const user = userEvent.setup();
+    let finishRetry: (result: typeof listResult) => void = () => undefined;
+    const pendingRetry = new Promise<typeof listResult>((resolve) => {
+      finishRetry = resolve;
+    });
+    const getProducts = vi
+      .fn<ProductApi['getProducts']>()
+      .mockResolvedValueOnce(staleList)
+      .mockReturnValue(pendingRetry);
+    renderRoute('/', { getProducts });
+
+    await user.click(await screen.findByRole('button', { name: 'Reintentar' }));
+    await user.click(screen.getByText('4 productos'));
+    expect(document.body).toHaveFocus();
+    finishRetry(listResult);
+
+    await screen.findByText('Datos actualizados.');
+    expect(document.body).toHaveFocus();
+  });
+
   it('mientras reintenta, lo indica y otro clic no vuelve a pedir los datos', async () => {
     const user = userEvent.setup();
     const neverResolves = new Promise<never>(() => undefined);
@@ -487,5 +546,62 @@ describe('datos no actualizados', () => {
     expect(retrying).toHaveAttribute('aria-disabled', 'true');
     await user.click(retrying);
     expect(getProducts).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('foco al cambiar de página', () => {
+  it('al abrir un producto, pasa a su título', async () => {
+    const user = userEvent.setup();
+    renderRoute('/');
+
+    await user.click(await screen.findByRole('link', { name: 'Acer Iconia Talk S' }));
+
+    const heading = await screen.findByRole('heading', { level: 1, name: 'Acer Iconia Talk S' });
+    await waitFor(() => {
+      expect(heading).toHaveFocus();
+    });
+  });
+
+  it('al volver al listado, pasa a la tarjeta del producto que se abrió', async () => {
+    const user = userEvent.setup();
+    renderRoute('/');
+
+    await user.click(await screen.findByRole('link', { name: 'Acer Iconia Talk S' }));
+    await user.click(await screen.findByRole('link', { name: 'Volver al listado' }));
+
+    const card = await screen.findByRole('link', { name: 'Acer Iconia Talk S' });
+    await waitFor(() => {
+      expect(card).toHaveFocus();
+    });
+  });
+
+  it('si esa tarjeta no está en el listado, pasa al título', async () => {
+    const { router } = renderRoute('/product/ZmGrkLRPXOTpxsU4jjAcv');
+    await screen.findByRole('heading', { level: 1, name: 'Acer Iconia Talk S' });
+
+    await act(() => router.navigate('/?q=alcatel'));
+
+    const heading = await screen.findByRole('heading', { level: 1, name: 'Móviles' });
+    await waitFor(() => {
+      expect(heading).toHaveFocus();
+    });
+  });
+
+  it('en la primera carga no mueve el foco', async () => {
+    renderRoute('/product/ZmGrkLRPXOTpxsU4jjAcv');
+
+    await screen.findByRole('heading', { level: 1, name: 'Acer Iconia Talk S' });
+    expect(document.body).toHaveFocus();
+  });
+
+  it('al escribir en el buscador, el foco se queda en el campo', async () => {
+    const user = userEvent.setup();
+    renderRoute('/');
+
+    const searchBox = await screen.findByRole('searchbox', { name: 'Buscar por marca o modelo' });
+    await user.type(searchBox, 'acer');
+
+    expect(await screen.findByText('3 de 4 productos')).toBeInTheDocument();
+    expect(searchBox).toHaveFocus();
   });
 });
