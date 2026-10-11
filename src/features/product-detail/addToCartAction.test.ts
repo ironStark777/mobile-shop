@@ -65,4 +65,20 @@ describe('createAddToCartAction', () => {
     expect(result).toEqual({ ok: false, message: 'Elige el almacenamiento y el color.' });
     expect(addToCart).not.toHaveBeenCalled();
   });
+
+  it.each(['', '  ', '1.5', '-1', 'abc'])(
+    'rechaza el código %j sin llamar al API',
+    async (code) => {
+      const addToCart = vi.fn<CartApi['addToCart']>();
+      const { action } = setup(addToCart);
+
+      const result = await action({
+        params: { id: 'abc' },
+        request: postForm({ storageCode: code, colorCode: '1000' }),
+      });
+
+      expect(result).toEqual({ ok: false, message: 'Elige el almacenamiento y el color.' });
+      expect(addToCart).not.toHaveBeenCalled();
+    },
+  );
 });

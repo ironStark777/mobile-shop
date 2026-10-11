@@ -9,11 +9,14 @@ export interface AddToCartResult {
   readonly message: string;
 }
 
-// Los códigos llegan como texto porque vienen de un formulario.
-const selectionSchema = z.object({
-  storageCode: z.coerce.number().int(),
-  colorCode: z.coerce.number().int(),
-});
+// Los códigos llegan del formulario como texto. Se exigen dígitos antes de convertirlos, porque
+// `Number('')` y `Number(' ')` dan 0.
+const optionCode = z
+  .string()
+  .regex(/^\d+$/)
+  .transform((code) => Number(code));
+
+const selectionSchema = z.object({ storageCode: optionCode, colorCode: optionCode });
 
 /**
  * Añade a la cesta el producto de la URL con el almacenamiento y el color elegidos, y guarda el
