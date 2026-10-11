@@ -1,4 +1,5 @@
 import { createSafeStorage, type KeyValueStorage } from '../lib/storage';
+import { isAbortError } from './isAbortError';
 
 export interface CacheEntry {
   readonly body: unknown;
@@ -107,7 +108,8 @@ function readParsed<T>(
  * Devuelve la respuesta guardada mientras esté vigente. Pasada la hora la pide de nuevo y,
  * si el API falla, devuelve la última guardada marcada como no actualizada (`isStale`).
  * Una respuesta que no pasa la validación cuenta como un fallo del API: no se guarda, así que
- * no sustituye al último dato bueno.
+ * no sustituye al último dato bueno. Una cancelación no es un fallo: se propaga sin usar el
+ * respaldo.
  */
 export async function fetchWithCache<T>(
   cache: ResponseCache,
@@ -125,7 +127,7 @@ export async function fetchWithCache<T>(
     cache.write(key, body);
     return { data, isStale: false };
   } catch (error) {
-    if (cached) {
+    if (cached && !isAbortError(error)) {
       return { data: cached.data, isStale: true };
     }
     throw error;

@@ -40,7 +40,11 @@ export function createAddToCartAction(cartApi: CartApi, cartStore: CartStore) {
       );
       cartStore.setCount(count);
       return { ok: true, message: 'Añadido a la cesta.' };
-    } catch {
+    } catch (error) {
+      // Una petición cancelada no es un fallo de la compra; el router descarta su resultado.
+      if (request.signal.aborted) {
+        throw error;
+      }
       return { ok: false, message: 'No se ha podido añadir a la cesta. Inténtalo de nuevo.' };
     }
   };

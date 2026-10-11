@@ -14,10 +14,11 @@ function setup(addToCart: CartApi['addToCart']) {
   return { action, cartStore };
 }
 
-function postForm(fields: Record<string, string>): Request {
+function postForm(fields: Record<string, string>, signal?: AbortSignal): Request {
   return new Request('http://localhost/product/abc', {
     method: 'POST',
     body: new URLSearchParams(fields),
+    signal,
   });
 }
 
@@ -50,6 +51,20 @@ describe('createAddToCartAction', () => {
       ok: false,
       message: 'No se ha podido añadir a la cesta. Inténtalo de nuevo.',
     });
+    expect(cartStore.setCount).not.toHaveBeenCalled();
+  });
+
+  it('si se cancela la petición, propaga la cancelación y no cambia la cesta', async () => {
+    const controller = new AbortController();
+    const abortError = new DOMException('The operation was aborted.', 'AbortError');
+    const addToCart = vi.fn<CartApi['addToCart']>().mockImplementation(() => {
+      controller.abort();
+      return Promise.reject(abortError);
+    });
+    const { action, cartStore } = setup(addToCart);
+    const request = postForm({ storageCode: '2001', colorCode: '1000' }, controller.signal);
+
+    await expect(action({ params: { id: 'abc' }, request })).rejects.toBe(abortError);
     expect(cartStore.setCount).not.toHaveBeenCalled();
   });
 

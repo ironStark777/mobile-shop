@@ -1,3 +1,5 @@
+import { isAbortError } from './isAbortError';
+
 export type Fetch = (url: string, init: RequestInit) => Promise<Response>;
 
 export interface RequestOptions {
@@ -30,10 +32,6 @@ const DEFAULT_API_BASE_URL = 'https://itx-frontend-test.onrender.com/api';
 // Se envuelve `fetch` porque llamarla suelta, sin `window` como contexto, lanza
 // "Illegal invocation" en algunos navegadores.
 const defaultFetch: Fetch = (url, init) => fetch(url, init);
-
-function isAbortError(error: unknown): boolean {
-  return error instanceof DOMException && error.name === 'AbortError';
-}
 
 /**
  * Sin timeout a propósito: el API puede tardar más de un minuto en arrancar en frío.

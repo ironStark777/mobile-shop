@@ -112,6 +112,18 @@ describe('fetchWithCache', () => {
     expect(result).toEqual({ data: ['guardado'], isStale: true });
   });
 
+  it('si se cancela la petición, propaga la cancelación aunque haya datos guardados', async () => {
+    const { clock, cache } = setup();
+    cache.write('/product', ['guardado']);
+    clock.now = CACHE_TTL_MS;
+    const abortError = new DOMException('The operation was aborted.', 'AbortError');
+    const fetchFresh = vi.fn(() => Promise.reject(abortError));
+
+    const result = fetchWithCache(cache, '/product', fetchFresh, parseNames);
+
+    await expect(result).rejects.toBe(abortError);
+  });
+
   it('si el API falla y no hay nada guardado, propaga el error', async () => {
     const { cache } = setup();
     const error = new Error('API caída');
