@@ -1,7 +1,7 @@
 import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import type { CartApi } from '../entities/cart/cartApi';
 import { createCartStore } from '../entities/cart/cartStore';
 import { CartStoreContext } from '../entities/cart/useCartCount';
@@ -11,6 +11,12 @@ import type { ProductApi } from '../entities/product/productApi';
 import { parseProductDetail, parseProductList } from '../entities/product/productMapper';
 import type { KeyValueStorage } from '../shared/lib/storage';
 import { createRoutes } from './routes';
+
+// jsdom no implementa `window.scrollTo` y avisa por consola cada vez que `ScrollRestoration` lo
+// llama al navegar.
+beforeAll(() => {
+  vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+});
 
 const listResult = { data: parseProductList(productList), isStale: false };
 const detailResult = { data: parseProductDetail(acerIconiaTalkS), isStale: false };
