@@ -1,0 +1,82 @@
+/*
+ * Barra fija arriba de la ventana: no ocupa sitio en la página, así que no mueve el contenido, y
+ * se ve aunque la cabecera haya quedado fuera de la pantalla.
+ */
+.bar {
+  --bar-height: 3px;
+  --appear-delay: 0.3s;
+
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: 1;
+  block-size: var(--bar-height);
+  overflow: hidden;
+  /* La aparición es una animación aparte del movimiento: dura 0 s y solo espera el retraso. */
+  animation: appear 0s var(--appear-delay) both;
+}
+
+/* El tramo de color que recorre la barra. */
+.bar::after {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inline-size: 40%;
+  background-color: var(--color-accent);
+  animation: slide 1.2s ease-in-out infinite;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250%);
+  }
+}
+
+/* Con movimiento reducido, la barra aparece igual, pero quieta y de lado a lado. */
+@media (prefers-reduced-motion: reduce) {
+  .bar::after {
+    inline-size: 100%;
+    animation: none;
+  }
+}
+
+.visuallyHidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* El aviso de carga lenta flota abajo, también para no mover el contenido. */
+.notice {
+  --notice-max-width: 30rem;
+
+  position: fixed;
+  inset-block-end: var(--space-4);
+  inset-inline: var(--page-gutter);
+  z-index: 1;
+  max-inline-size: var(--notice-max-width);
+  margin-inline: auto;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-panel);
+  background-color: var(--color-text);
+  color: var(--color-bg);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}

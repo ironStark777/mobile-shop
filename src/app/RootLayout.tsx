@@ -1,5 +1,6 @@
 import { Outlet, ScrollRestoration, type Location } from 'react-router';
 import { Header } from './Header';
+import { NavigationProgress } from './NavigationProgress';
 import styles from './RootLayout.module.css';
 
 /**
@@ -14,6 +15,7 @@ function getScrollKey(location: Location): string {
 export function RootLayout() {
   return (
     <>
+      <NavigationProgress />
       <Header />
       <main className={styles.main}>
         <Outlet />

@@ -93,6 +93,28 @@ describe('createRoutes', () => {
     expect(within(main).getByRole('status')).toHaveTextContent('Cargando');
   });
 
+  it('al navegar, anuncia la carga y mantiene la página actual a la vista', async () => {
+    const user = userEvent.setup();
+    let resolveDetail: (result: typeof detailResult) => void = () => undefined;
+    const pendingDetail = new Promise<typeof detailResult>((resolve) => {
+      resolveDetail = resolve;
+    });
+    const getProductById = vi.fn<ProductApi['getProductById']>().mockReturnValue(pendingDetail);
+    renderRoute('/', { getProductById });
+
+    await user.click(await screen.findByRole('link', { name: 'Acer Iconia Talk S' }));
+
+    expect(await screen.findByText('Cargando…')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Móviles' })).toBeInTheDocument();
+
+    resolveDetail(detailResult);
+
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Acer Iconia Talk S' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Cargando…')).not.toBeInTheDocument();
+  });
+
   it('si el API falla, muestra un error con un enlace al listado', async () => {
     const error = new Error('API caída');
     const getProducts = vi.fn<ProductApi['getProducts']>().mockRejectedValue(error);
